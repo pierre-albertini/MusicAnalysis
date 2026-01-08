@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
         graph = Graph(spotify_data)
         # graph.print_data()
-        # graph.draw_top_artists(30)
+        graph.draw_top_artists(30)
         # graph.draw_artist_histogram()
         # graph.draw_duration_histogram()
         # graph.draw_countries_by_songs()                ### TRES PETIT
@@ -18,7 +18,7 @@ if __name__ == "__main__":
         # graph.display_artists_by_country("US")
         # graph.draw_artists_pie_chart_by_country("Unknown")
         # graph.draw_histogram_by_release_year()
-        graph.draw_histogram_by_add_time("hour")
+        # graph.draw_histogram_by_add_time("hour")
 
     else:
         print("Failed to set up Spotify API client.")

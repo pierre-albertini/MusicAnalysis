@@ -22,3 +22,5 @@ __pycache__/
 # Ignore developpement files
 Idees.txt
 Brouillon.txt
+
+.idea
