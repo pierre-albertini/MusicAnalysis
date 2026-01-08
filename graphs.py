@@ -64,6 +64,7 @@ class Graph:
 
         # Display the histogram
         plt.tight_layout()
+        plt.savefig("images/top_artists.png")
         plt.show()
 
     def draw_artist_histogram(self):
@@ -116,7 +117,9 @@ class Graph:
         plt.title('Number of Artists by Song Count')
 
         # Afficher l'histogramme
+        plt.savefig("images/artists.png")
         plt.show()
+
 
     def draw_duration_histogram(self):
         # Compter le nombre de chansons par durée
@@ -171,6 +174,7 @@ class Graph:
         plt.title('Number of Songs by Duration')
 
         # Afficher l'histogramme
+        plt.savefig("images/duration.png")
         plt.show()
 
 
@@ -224,8 +228,11 @@ class Graph:
         patches, _ = plt.pie(values, labels=pie_labels, startangle=90)
         plt.title("Origins of Favorite Artists (by total number of songs)")
         plt.legend(patches, legend_labels, loc='center right', bbox_to_anchor=(0.01, 0.5))
+
         plt.tight_layout()
+        plt.savefig("images/countries_by_song.png")
         plt.show()
+
 
     def draw_countries_by_unique_artists(self):
         country_scores = {}
@@ -281,7 +288,9 @@ class Graph:
         patches, _ = plt.pie(values, labels=pie_labels, startangle=90)
         plt.title("Origins of Favorite Artists (by total number of artists)")
         plt.legend(patches, legend_labels, loc='center right', bbox_to_anchor=(0.01, 0.5))
+
         plt.tight_layout()
+        plt.savefig("images/countries_by_unique_artists.png")
         plt.show()
 
 
@@ -353,7 +362,9 @@ class Graph:
         patches, _ = plt.pie(counts, labels=pie_labels, startangle=90)
         plt.title(f"Artists Distribution from {country_abbr}")
         plt.legend(patches, legend_labels, loc='center right', bbox_to_anchor=(0.01, 0.2))
+
         plt.tight_layout()
+        plt.savefig("images/countries_pie.png")
         plt.show()
 
     def draw_histogram_by_release_year(self):
@@ -387,6 +398,7 @@ class Graph:
         plt.xticks(rotation=45)
 
         # Show the histogram
+        plt.savefig("images/release_year.png")
         plt.show()
 
     def draw_histogram_by_add_time(self, time_unit):
@@ -446,4 +458,5 @@ class Graph:
         # Show the histogram
         plt.xticks(rotation=45)  # Rotate x-axis labels for better visibility
         plt.tight_layout()  # Adjust layout for better fit
+        plt.savefig("images/add_time.png")
         plt.show()

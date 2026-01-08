@@ -1,4 +1,5 @@
 import spotipy
+from musicbrainzngs import NetworkError
 from spotipy.oauth2 import SpotifyOAuth
 import os
 import json
@@ -14,7 +15,11 @@ import musicbrainzngs
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # Set up MusicBrainz
-musicbrainzngs.set_useragent("MyApplication", "0.1", "https://myapplication.com")
+musicbrainzngs.set_useragent(
+    "MusicAnalysis",
+    "1.0",
+    "pierrealbertini@icloud.com"
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -115,6 +120,7 @@ class SpotifyData:
         favorite_songs = []
         limit = 50
         offset = 0
+        artist_cache = {}
 
         while len(favorite_songs) < self.user_data["num_liked_tracks"]:
             tracks = self.sp.current_user_saved_tracks(limit=limit, offset=offset)
@@ -131,8 +137,39 @@ class SpotifyData:
                 album_name = album["name"]
                 release_date = album["release_date"]
 
-                artist_info = musicbrainzngs.search_artists(artist=artist_name, limit=1)
-                artist_country = artist_info["artist-list"][0].get("country", "Unknown") if artist_info.get("artist-list") else "Unknown"
+                if artist_name in artist_cache:
+                    artist_country = artist_cache[artist_name]
+
+                else:
+                    try:
+                        artist_info = musicbrainzngs.search_artists(
+                            artist=artist_name,
+                            limit=1
+                        )
+                        time.sleep(1)
+
+                        artist_country = (
+                            artist_info["artist-list"][0].get("country", "Unknown")
+                            if artist_info.get("artist-list")
+                            else "Unknown"
+                        )
+
+                    except NetworkError:
+                        # 🔹 Spotify fallback
+                        try:
+                            spotify_artist_id = track_info["artists"][0]["id"]
+                            spotify_artist = self.sp.artist(spotify_artist_id)
+
+                            artist_country = (
+                                spotify_artist.get("genres", ["Unknown"])[0]
+                                if spotify_artist.get("genres")
+                                else "Unknown"
+                            )
+                        except Exception:
+                            artist_country = "Unknown"
+
+                    # Cache result
+                    artist_cache[artist_name] = artist_country
 
                 favorite_songs.append(
                     (track_name, artist_name, track_id, album_name, track_duration, release_date, artist_country, added_at))
