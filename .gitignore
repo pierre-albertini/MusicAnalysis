@@ -23,4 +23,9 @@ __pycache__/
 Idees.txt
 Brouillon.txt
 
-.idea
+.idea/
+__pycache__/
+.ipynb_checkpoints/
+.env
+.cache/
+
