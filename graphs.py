@@ -24,7 +24,7 @@ class Graph:
             for song in self.spotify_data.user_data.get('favorite_songs', []):
                 print(f"- {song[0]} by {song[1]}, added on {song[7]}")
 
-    def draw_top_artists(self, selectednumber):
+    def draw_top_artists(self, selectednumber, is_show:bool=False):
         # Count the number of songs per artist
         artist_count = {}
         for song in self.spotify_data.user_data['favorite_songs']:
@@ -64,10 +64,12 @@ class Graph:
 
         # Display the histogram
         plt.tight_layout()
-        plt.savefig("images/top_artists.png")
-        plt.show()
+        plt.savefig(f"images/top_artists_top_{selectednumber}.png")
+        if is_show:
+            plt.show()
+        plt.close()
 
-    def draw_artist_histogram(self):
+    def draw_artist_histogram(self, is_show:bool=False):
         # Compter le nombre de chansons par artiste
         artist_count = {}
         for song in self.spotify_data.user_data['favorite_songs']:
@@ -117,11 +119,12 @@ class Graph:
         plt.title('Number of Artists by Song Count')
 
         # Afficher l'histogramme
-        plt.savefig("images/artists.png")
-        plt.show()
+        plt.savefig("images/artists_by_song_count_histogram.png")
+        if is_show:
+           plt.show()
+        plt.close()
 
-
-    def draw_duration_histogram(self):
+    def draw_duration_histogram(self, is_show:bool=False):
         # Compter le nombre de chansons par durée
         duration_count = {'<2m00': 0, '2m00-2m15': 0,'2m15-2m30': 0,
                           '2m30-2m45': 0, '2m45-3m00': 0, '3m00-3m15': 0,
@@ -174,11 +177,13 @@ class Graph:
         plt.title('Number of Songs by Duration')
 
         # Afficher l'histogramme
-        plt.savefig("images/duration.png")
-        plt.show()
+        plt.savefig("images/duration_histogram.png")
+        if is_show:
+            plt.show()
+        plt.close()
 
 
-    def draw_countries_by_songs(self):
+    def draw_countries_by_songs(self, is_show:bool=False):
         country_scores = {}
 
         for song in self.spotify_data.user_data['favorite_songs']:
@@ -228,13 +233,14 @@ class Graph:
         patches, _ = plt.pie(values, labels=pie_labels, startangle=90)
         plt.title("Origins of Favorite Artists (by total number of songs)")
         plt.legend(patches, legend_labels, loc='center right', bbox_to_anchor=(0.01, 0.5))
-
         plt.tight_layout()
+
         plt.savefig("images/countries_by_song.png")
-        plt.show()
+        if is_show:
+           plt.show()
+        plt.close()
 
-
-    def draw_countries_by_unique_artists(self):
+    def draw_countries_by_unique_artists(self, is_show:bool=False):
         country_scores = {}
         distinct_artist_list = []
 
@@ -288,10 +294,12 @@ class Graph:
         patches, _ = plt.pie(values, labels=pie_labels, startangle=90)
         plt.title("Origins of Favorite Artists (by total number of artists)")
         plt.legend(patches, legend_labels, loc='center right', bbox_to_anchor=(0.01, 0.5))
-
         plt.tight_layout()
+
         plt.savefig("images/countries_by_unique_artists.png")
-        plt.show()
+        if is_show:
+           plt.show()
+        plt.close()
 
 
     def display_artists_by_country(self, country):
@@ -325,7 +333,7 @@ class Graph:
         else:
             print(f"No artists found from {country}.")
 
-    def draw_artists_pie_chart_by_country(self, country_abbr):
+    def draw_artists_pie_chart_by_country(self, country_abbr, is_show:bool=False):
         country_artists = {}
 
         # Count the number of songs for each artist from the specified country
@@ -362,12 +370,14 @@ class Graph:
         patches, _ = plt.pie(counts, labels=pie_labels, startangle=90)
         plt.title(f"Artists Distribution from {country_abbr}")
         plt.legend(patches, legend_labels, loc='center right', bbox_to_anchor=(0.01, 0.2))
-
         plt.tight_layout()
-        plt.savefig("images/countries_pie.png")
-        plt.show()
 
-    def draw_histogram_by_release_year(self):
+        plt.savefig("images/countries_by_country.png")
+        if is_show:
+           plt.show()
+        plt.close()
+
+    def draw_histogram_by_release_year(self, is_show:bool=False):
         # Extract the favorite songs list from the data
         favorite_songs = self.spotify_data.user_data['favorite_songs']
 
@@ -398,10 +408,12 @@ class Graph:
         plt.xticks(rotation=45)
 
         # Show the histogram
-        plt.savefig("images/release_year.png")
-        plt.show()
+        plt.savefig("images/by_release_year.png")
+        if is_show:
+           plt.show()
+        plt.close()
 
-    def draw_histogram_by_add_time(self, time_unit):
+    def draw_histogram_by_add_time(self, time_unit, is_show:bool=False):
         favorite_songs = self.spotify_data.user_data['favorite_songs']
 
         # Define a function to extract the appropriate time unit from the add_date
@@ -458,5 +470,114 @@ class Graph:
         # Show the histogram
         plt.xticks(rotation=45)  # Rotate x-axis labels for better visibility
         plt.tight_layout()  # Adjust layout for better fit
-        plt.savefig("images/add_time.png")
-        plt.show()
+
+        plt.savefig("images/by_add_time.png")
+        if is_show:
+           plt.show()
+        plt.close()
+
+
+    def draw_duration_vs_release_year(self, is_show:bool=False):
+        import matplotlib.pyplot as plt
+
+        years = []
+        durations = []
+
+        for song in self.spotify_data.user_data["favorite_songs"]:
+            duration_ms = song[4]
+            release_date = song[5]
+
+            try:
+                year = int(release_date[:4])
+                years.append(year)
+                durations.append(duration_ms / 60000)  # minutes
+            except:
+                continue
+
+        plt.figure(figsize=(10, 6))
+        plt.scatter(years, durations, alpha=0.6)
+        plt.title("Durée des chansons en fonction de l'année de sortie")
+        plt.xlabel("Année de sortie")
+        plt.ylabel("Durée (minutes)")
+        plt.grid(True)
+        plt.tight_layout()
+
+        plt.savefig("images/duration_vs_release_year.png")
+        if is_show:
+           plt.show()
+        plt.close()
+
+    def draw_pie_charts_for_all_countries(self, is_save=False, is_show=True):
+
+        import math
+        import pycountry
+        import matplotlib.pyplot as plt
+
+        favorite_songs = self.spotify_data.user_data["favorite_songs"]
+
+        def draw_artists_pie_chart_by_country_and_ax(country_abbr, ax, country_songs_count):
+            country_artists = {}
+
+            for song in favorite_songs:
+                artist_country = song[6]
+                if artist_country == country_abbr:
+                    artist_name = song[1]
+                    country_artists[artist_name] = country_artists.get(artist_name, 0) + 1
+
+            sorted_artists = sorted(country_artists.items(), key=lambda x: x[1], reverse=True)
+
+            counts = [count for _, count in sorted_artists]
+            pie_labels = ['' for _ in sorted_artists]
+
+            ax.pie(counts, labels=pie_labels, startangle=90)
+
+            country = pycountry.countries.get(alpha_2=country_abbr)
+            title_country = country.name if country else country_abbr
+            n = country_songs_count[country_abbr]
+
+            ax.set_title(f"{title_country} ({n} {'song' if n == 1 else 'songs'})")
+
+        # --- Comptage des pays ---
+        country_abbrs = set(song[6] for song in favorite_songs)
+
+        country_songs_count = {
+            abbr: sum(song[6] == abbr for song in favorite_songs)
+            for abbr in country_abbrs
+        }
+
+        sorted_countries = sorted(
+            country_abbrs,
+            key=lambda x: country_songs_count[x],
+            reverse=True
+        )
+
+        num_countries = len(sorted_countries)
+        num_cols = math.ceil(math.sqrt(num_countries))
+        num_rows = math.ceil(num_countries / num_cols)
+
+        fig, axes = plt.subplots(
+            num_rows,
+            num_cols,
+            figsize=(5 * num_cols, 4 * num_rows),
+            constrained_layout=True
+        )
+
+        axes = axes.flatten() if num_countries > 1 else [axes]
+
+        for i, country_abbr in enumerate(sorted_countries):
+            draw_artists_pie_chart_by_country_and_ax(
+                country_abbr,
+                axes[i],
+                country_songs_count
+            )
+
+        for j in range(num_countries, len(axes)):
+            fig.delaxes(axes[j])
+
+        if is_save:
+            plt.savefig("images/pie_charts_artists_by_country.png")
+
+        if is_show:
+            plt.show()
+
+        plt.close(fig)
